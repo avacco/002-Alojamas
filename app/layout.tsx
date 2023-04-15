@@ -2,7 +2,7 @@ import { Nunito } from 'next/font/google'
 import Navbar from './components/navbar/Navbar'
 import './globals.css'
 import ClientOnly from './components/ClientOnly';
-import Modal from './components/modals/Modal';
+import RegisterModal from './components/modals/RegisterModal';
 
 // Una nueva manera de manejar metadatos
 export const metadata = {
@@ -24,7 +24,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={font.className}>
         <ClientOnly>
-          <Modal actionLabel='Aceptar' isOpen />
+          <RegisterModal />
           <Navbar />
         </ClientOnly>
         
