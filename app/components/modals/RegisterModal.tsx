@@ -40,7 +40,7 @@ const RegisterModal = () => {
       <div className='flex flex-col gap-4'>
         <Heading title='Bienvenido a Alojamiento' subtitle='Crea una cuenta para continuar'/>
         <Input id='email' type='email' label='Correo' disabled={isLoading} register={register} errors={errors} required />
-        <Input id='nombre' type='text' label='Nombre' disabled={isLoading} register={register} errors={errors} required />
+        <Input id='name' type='text' label='Nombre' disabled={isLoading} register={register} errors={errors} required />
         <Input id='password' type='password' label='Contraseña' disabled={isLoading} register={register} errors={errors} required />
       </div>
     )
