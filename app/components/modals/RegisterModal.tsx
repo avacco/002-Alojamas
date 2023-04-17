@@ -8,6 +8,7 @@ import useRegisterModal from '@/app/hooks/useRegisterModal';
 import Modal from './Modal';
 import Heading from '../Heading';
 import Input from '../inputs/Input';
+import { toast } from 'react-hot-toast';
 
 const RegisterModal = () => {
 
@@ -28,7 +29,7 @@ const RegisterModal = () => {
     axios.post('/api/register', data).then(res => {
         registerModal.onClose();
       }).catch(err => {
-        console.log(err);
+        toast.error('Error');
       }).finally(() => {
         setIsLoading(false);
       })
@@ -37,7 +38,9 @@ const RegisterModal = () => {
     const bodyContent = (
       <div className='flex flex-col gap-4'>
         <Heading title='Bienvenido a Alojamiento' subtitle='Crea una cuenta para continuar'/>
-        <Input id='email' label='Correo' disabled={isLoading} register={register} errors={errors} required />
+        <Input id='email' type='email' label='Correo' disabled={isLoading} register={register} errors={errors} required />
+        <Input id='nombre' type='text' label='Nombre' disabled={isLoading} register={register} errors={errors} required />
+        <Input id='password' type='password' label='Contraseña' disabled={isLoading} register={register} errors={errors} required />
       </div>
     )
 
