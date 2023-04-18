@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 
+/* Custom hook necesario para el manejo (apertura y cierre) del modal de registro */
+
 interface RegisterModalStore {
   isOpen: boolean;
   onOpen: () => void;
