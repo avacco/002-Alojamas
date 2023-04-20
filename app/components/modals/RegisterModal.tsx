@@ -11,10 +11,12 @@ import Input from '../inputs/Input';
 import { toast } from 'react-hot-toast';
 import Button from '../Button';
 import { signIn } from 'next-auth/react';
+import useLoginModal from '@/app/hooks/useLoginModal';
 
 const RegisterModal = () => {
 
   const registerModal = useRegisterModal();
+  const loginModal = useLoginModal();
   const [isLoading, setIsLoading] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm<FieldValues>({
@@ -25,18 +27,26 @@ const RegisterModal = () => {
     }
   });
 
+  /* Maneja evento de registro */
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    setIsLoading(true);
+    setIsLoading(true); 
 
-    axios.post('/api/register', data).then(res => {
-        registerModal.onClose();
+    axios.post('/api/register', data).then(res => { // Envia una petición POST al endpoint /api/register con los datos del formulario
+        registerModal.onClose(); // Cierra el modal de registro
       }).catch(err => {
-        toast.error('Error');
+        toast.error('Error'); // Envia un toast con un mensaje de error si algo sale mal
       }).finally(() => {
         setIsLoading(false);
       })
     }
 
+      /* Cuando presiona en 'Inicia sesión', cierra el modal de registro y abre el de login. */
+      const toggle = useCallback(() => {
+        registerModal.onClose();
+        loginModal.onOpen();
+      }, [loginModal, registerModal]);
+  
+  /* Contenido del body del modal de registro */
     const bodyContent = (
       <div className='flex flex-col gap-4'>
         <Heading title='Bienvenido a Alojamiento' subtitle='Crea una cuenta para continuar'/>
@@ -45,7 +55,7 @@ const RegisterModal = () => {
         <Input id='password' type='password' label='Contraseña' disabled={isLoading} register={register} errors={errors} required />
       </div>
     )
-
+  /* Contenido del footer del modal de registro */
     const footerContent = (
       <div className='flex flex-col mt-3 gap-4'>
         <hr />
@@ -54,14 +64,14 @@ const RegisterModal = () => {
         <div className='text-neutral-500 text-center mt-4 font-light'>
           <div className='justify-center flex flex-row items-center gap-2'>
             ¿Ya estas registrado?
-            <div onClick={registerModal.onClose} className='text-neutral-800 cursor-pointer hover:underline font-semibold'>
+            <div onClick={toggle} className='text-neutral-800 cursor-pointer hover:underline font-semibold'>
               Inicia sesión
             </div>
           </div>
         </div>
       </div>
     )
-
+  /* Retorna el componente de modal con los contenidos antes definidos */
   return (
     <Modal 
       disabled={isLoading} 

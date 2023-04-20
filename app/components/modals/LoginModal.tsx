@@ -1,7 +1,7 @@
 'use client';
 import { AiFillGithub } from 'react-icons/ai';
 import { FcGoogle } from 'react-icons/fc'
-import { useState  } from 'react';
+import { useCallback, useState  } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import useLoginModal from '@/app/hooks/useLoginModal';
 import Modal from './Modal';
@@ -11,10 +11,12 @@ import { toast } from 'react-hot-toast';
 import Button from '../Button';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import useRegisterModal from '@/app/hooks/useRegisterModal';
 
 const LoginModal = () => {
 
   const router = useRouter();
+  const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -47,6 +49,12 @@ const LoginModal = () => {
     })
   }
 
+  /* Cuando presiona en 'Registrate aquí', cierra el modal de login y abre el de registro. */
+    const toggle = useCallback(() => {
+      loginModal.onClose();
+      registerModal.onOpen();
+    }, [loginModal, registerModal]);
+
   /* Contenido del body del modal de login */
     const bodyContent = (
       <div className='flex flex-col gap-4'>
@@ -56,7 +64,7 @@ const LoginModal = () => {
       </div>
     )
 
-  /*/* Contenido del footer del modal de login */
+  /* Contenido del footer del modal de login */
     const footerContent = (
       <div className='flex flex-col mt-3 gap-4'>
         <hr />
@@ -64,9 +72,9 @@ const LoginModal = () => {
         <Button outline label='Continuar con GitHub' icon={AiFillGithub} onClick={() => signIn('github')} />
         <div className='text-neutral-500 text-center mt-4 font-light'>
           <div className='justify-center flex flex-row items-center gap-2'>
-            ¿Ya estas registrado?
-            <div onClick={loginModal.onClose} className='text-neutral-800 cursor-pointer hover:underline font-semibold'>
-              Inicia sesión
+            ¿No tienes cuenta?
+            <div onClick={toggle} className='text-neutral-800 cursor-pointer hover:underline font-semibold'>
+              Registrate aquí.
             </div>
           </div>
         </div>
