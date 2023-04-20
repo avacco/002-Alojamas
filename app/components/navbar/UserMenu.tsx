@@ -8,6 +8,7 @@ import useRegisterModal from '@/app/hooks/useRegisterModal';
 import useLoginModal from '@/app/hooks/useLoginModal';
 import { SafeUser } from '@/app/types';
 import { signOut } from 'next-auth/react';
+import useRentModal from '@/app/hooks/useRentModal';
 
 
 interface UserMenuProps {
@@ -19,16 +20,25 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
   const [isOpen, setIsOpen] = useState(false)
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
+  const rentModal = useRentModal();
 
   const toggleOpen = useCallback(() => {
     setIsOpen((value) => !value);
+
   }, [])
+  
+  const onRent = useCallback(() => {
+      if(!currentUser) loginModal.onOpen(); // Si no hay un usuario logeado, abre el modal de login.
+
+      rentModal.onOpen();
+
+    }, [currentUser, loginModal], );
   
 
   return (
     <div className="relative">
       <div className="flex flex-row items-center gap-3">
-        <div onClick={() => {}} className="hidden md:block text-sm font-semibold py-3 px-4 rounded-full hover:bg-neutral-100 transition cursor-pointer">
+        <div onClick={onRent} className="hidden md:block text-sm font-semibold py-3 px-4 rounded-full hover:bg-neutral-100 transition cursor-pointer">
           Alojamiento home
         </div>
         <div onClick={toggleOpen} className="p-4 md:py-1 md:px-2 border-[1px] border-neutral-200 flex flex-row items-center gap-3 rounded-full cursor-pointer hover:shadow-md transition">
@@ -47,7 +57,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
                 <MenuItem onClick={() => {}} label='Mis favoritos'/>
                 <MenuItem onClick={() => {}} label='Mis reservas'/>
                 <MenuItem onClick={() => {}} label='Mis propiedades'/>
-                <MenuItem onClick={() => {}} label='Mi home'/>
+                <MenuItem onClick={rentModal.onOpen} label='Mi home'/>
                 <hr />
                 <MenuItem onClick={() => signOut()} label='Salir'/>
               </>
