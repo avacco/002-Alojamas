@@ -7,6 +7,10 @@ import Heading from "../Heading";
 import { categories } from "../navbar/Categories";
 import CategoryInput from "../inputs/CategoryInput";
 import { FieldValues, useForm } from "react-hook-form";
+import CountrySelect from "../inputs/CountrySelect";
+import dynamic from "next/dynamic";
+import Counter from "../inputs/Counter";
+
 
 /* Pasos  */
 enum STEPS {
@@ -40,6 +44,14 @@ const RentModal = () => {
   });
 
   const category = watch('category'); // Vigila por cambios en el campo category, y lo asigna a la variable 'category'
+  const location = watch('location') // Hace lo mismo con las demas variables
+  const guestCount = watch('guestCount');
+  const roomCount = watch('roomCount');
+  const bathroomCount = watch('bathroomCount');
+
+  /* WORKAROUND: Importa el mapa de una manera especifica debido a incompatibilidades de leaflet con React */
+  const Map = useMemo(() => dynamic(() => import("../Map"), { ssr: false }), [location])
+
 
   /* Crea setCustomValue ya que React, si bien setea el valor con setValue, no re-renderiza la pagina. Esto lo soluciona. */
   const setCustomValue = (id: string, value: any) => { 
@@ -66,13 +78,14 @@ const RentModal = () => {
   }, [step]);
 
   const secondaryActionLabel = useMemo(() => {
+
     if(step === STEPS.CATEGORY) {
       return undefined;
     }
     return 'Atras';
   }, [step]);
 
-
+    // Paso de categoria
   let bodyContent = (
     <div className="flex flex-col gap-8">
       <Heading 
@@ -89,11 +102,62 @@ const RentModal = () => {
     </div>
   )
 
+  // Paso de localizacion
+  if (step === STEPS.LOCATION) {
+    bodyContent = (
+      <div className="flex flex-col gap-8">
+        <Heading 
+          title="¿Donde se encuentra tu propiedad?"
+          subtitle="Selecciona una localización."
+        />
+        <CountrySelect
+          value={location}
+          onChange={(value) => setCustomValue('location', value)}
+        />
+        <Map center={location?.latlng} />
+
+      </div>
+    )
+  }
+
+  if (step === STEPS.INFO) {
+    bodyContent = (
+      <div className="flex flex-col gap-8">
+        <Heading
+          title="Información sobre su propiedad"
+          subtitle="Describe tu propiedad."
+        />
+        <Counter 
+          title="Huespedes"
+          subtitle="¿Cuantos huespedes pueden albergarse?"
+          value={guestCount}
+          onChange={(value) => setCustomValue('guestCount', value)}
+        />
+        <hr/>
+        <Counter 
+          title="Habitaciones"
+          subtitle="¿Cuantas habitaciones tiene?"
+          value={roomCount}
+          onChange={(value) => setCustomValue('roomCount', value)}
+        />
+        <hr/>
+        <Counter 
+          title="Baños"
+          subtitle="¿Cuantos baños tiene?"
+          value={bathroomCount}
+          onChange={(value) => setCustomValue('bathroomCount', value)}
+        />
+        <hr/>
+        
+      </div>
+    )
+  }
+
   return (
     <Modal 
       isOpen={rentModal.isOpen}
       onClose={rentModal.onClose}
-      onSubmit={rentModal.onClose}
+      onSubmit={onNext}
       actionLabel={actionLabel}
       secondaryActionLabel={secondaryActionLabel}
       secondaryAction={step === STEPS.CATEGORY ? undefined : onBack}
