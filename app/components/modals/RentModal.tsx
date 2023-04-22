@@ -6,10 +6,15 @@ import { useMemo, useState } from "react";
 import Heading from "../Heading";
 import { categories } from "../navbar/Categories";
 import CategoryInput from "../inputs/CategoryInput";
-import { FieldValues, useForm } from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import CountrySelect from "../inputs/CountrySelect";
 import dynamic from "next/dynamic";
 import Counter from "../inputs/Counter";
+import ImageUpload from "../inputs/ImageUpload";
+import Input from "../inputs/Input";
+import axios from "axios";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 
 /* Pasos  */
@@ -17,17 +22,19 @@ enum STEPS {
   CATEGORY = 0,
   LOCATION = 1,
   INFO = 2,
-  IMAAGES = 3,
+  IMAGES = 3,
   DESCRIPTION = 4,
   PRICE = 5
 }
 
 const RentModal = () => {
+  const router = useRouter();
   const rentModal = useRentModal();
 
   const [step, setStep] = useState(STEPS.CATEGORY);
+  const [isLoading, setIsLoading] = useState(false);
 
-  /* Valores para el formulario */
+  /* Valores que se usaran para el formulario */
   const { register, handleSubmit, setValue, watch, formState: { errors }, reset } = useForm<FieldValues>({
     defaultValues: {
       category: '',
@@ -43,11 +50,13 @@ const RentModal = () => {
 
   });
 
-  const category = watch('category'); // Vigila por cambios en el campo category, y lo asigna a la variable 'category'
-  const location = watch('location') // Hace lo mismo con las demas variables
+  // Vigila por cambios en el campo correspondiente, y lo asigna a la variable del mismo nombre.
+  const category = watch('category'); 
+  const location = watch('location') 
   const guestCount = watch('guestCount');
   const roomCount = watch('roomCount');
   const bathroomCount = watch('bathroomCount');
+  const imageSrc = watch('imageSrc');
 
   /* WORKAROUND: Importa el mapa de una manera especifica debido a incompatibilidades de leaflet con React */
   const Map = useMemo(() => dynamic(() => import("../Map"), { ssr: false }), [location])
@@ -62,6 +71,7 @@ const RentModal = () => {
     })
   }
 
+  /* Controladores para los botones de Siguiente y Atras */
   const onBack = () => {
     setStep((value) => value - 1);
   };
@@ -70,8 +80,31 @@ const RentModal = () => {
     setStep((value) => value + 1);
   }
 
-  const actionLabel = useMemo(() => {
-    if(step === STEPS.PRICE) {
+  /* Envia la informacion del formulario */
+  const onSubmit: SubmitHandler<FieldValues> = (data) => {
+    if(step !== STEPS.PRICE) return onNext(); // Si no se encuentra en el ultimo paso, sigue con el siguiente paso.
+    
+    setIsLoading(true);
+    
+    axios.post('/api/listings', data)
+    .then(() => {
+      toast.success('Se ha registrado la propiedad exitosamente');
+      router.refresh(); // Refresca la pagina
+      reset(); // Limpia el formulario
+      setStep(STEPS.CATEGORY); // Devuelve al primer paso
+      rentModal.onClose(); // Cierra el modal
+    })
+    .catch(() => {
+      toast.error('Hubo un error al registrar la propiedad');
+    })
+    .finally(() => {
+      setIsLoading(false);
+    })
+  }
+  
+
+  const actionLabel = useMemo(() => { 
+    if(step === STEPS.PRICE) { // Si se encuentra en el ultimo paso, cambia el label del boton rojo a Crear en vez de Siguiente.
       return 'Crear';
     }
     return 'Siguiente';
@@ -79,9 +112,8 @@ const RentModal = () => {
 
   const secondaryActionLabel = useMemo(() => {
 
-    if(step === STEPS.CATEGORY) {
-      return undefined;
-    }
+    if(step === STEPS.CATEGORY) return undefined; // Si se encuentra en el primer paso, no muestra el boton Atras.
+    
     return 'Atras';
   }, [step]);
 
@@ -113,13 +145,14 @@ const RentModal = () => {
         <CountrySelect
           value={location}
           onChange={(value) => setCustomValue('location', value)}
-        />
+        />// Si no se encuentra en el ultimo paso, sigue con el siguiente paso.
         <Map center={location?.latlng} />
 
       </div>
     )
   }
 
+  // Paso de informacion
   if (step === STEPS.INFO) {
     bodyContent = (
       <div className="flex flex-col gap-8">
@@ -148,7 +181,72 @@ const RentModal = () => {
           onChange={(value) => setCustomValue('bathroomCount', value)}
         />
         <hr/>
-        
+      </div>
+    )
+  }
+
+  // Paso de imagenes
+  if (step === STEPS.IMAGES) {
+    bodyContent = (
+      <div className="flex flex-col gap-8">
+        <Heading
+          title="Agregue una foto de su propiedad"
+          subtitle="Muestra a tus potenciales huespedes como se ve tu propiedad."
+        />
+        <ImageUpload 
+          value={imageSrc}
+          onChange={(value) => setCustomValue('imageSrc', value)}
+        />
+      </div>
+    )
+  }
+
+  // Paso de descripcion
+  if (step === STEPS.DESCRIPTION) {
+    bodyContent = (
+      <div className="flex flex-col gap-8">
+        <Heading
+          title="Descripción de su propiedad"
+          subtitle="Describa su propiedad."
+        />
+        <Input
+          id="title"
+          label="Titulo"
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          required
+        />
+        <hr/>
+        <Input
+          id="description"
+          label="Descripción"
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          required
+        />
+      </div>
+    )
+  }
+
+  if (step === STEPS.PRICE) {
+    bodyContent = (
+      <div className="flex flex-col gap-8">
+        <Heading
+          title="Precio por noche en su propiedad"
+          subtitle="Indique el precio por pasar una noche en su propiedad."
+        />
+        <Input
+          id="price"
+          label="Precio"
+          formatPrice
+          type="number"
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          required
+        />
       </div>
     )
   }
@@ -157,7 +255,7 @@ const RentModal = () => {
     <Modal 
       isOpen={rentModal.isOpen}
       onClose={rentModal.onClose}
-      onSubmit={onNext}
+      onSubmit={handleSubmit(onSubmit)}
       actionLabel={actionLabel}
       secondaryActionLabel={secondaryActionLabel}
       secondaryAction={step === STEPS.CATEGORY ? undefined : onBack}
