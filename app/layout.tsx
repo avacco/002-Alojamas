@@ -19,9 +19,7 @@ const font = Nunito({
   subsets: ["latin"],
 });
 
-export default async function RootLayout({
-  children,
-}: {
+export default async function RootLayout({children,}: {
   children: React.ReactNode
 }) {
 
@@ -38,8 +36,9 @@ export default async function RootLayout({
           <RentModal />
           <Navbar currentUser={currentUser} />
         </ClientOnly>
-        
-        {children}
+        <div className='pb-20 pt-20'>
+          {children}
+        </div>
         </body>
     </html>
   )

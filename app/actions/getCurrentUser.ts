@@ -35,6 +35,6 @@ export default async function getCurrentUser() {
     }
 
   } catch (error: any) {
-    return null;
+    return null; // A fin de prevenir que la app explote si no hay un usuario activo, retorna null.
   }
 }
