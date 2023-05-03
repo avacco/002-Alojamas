@@ -9,6 +9,9 @@ interface IParams {
   listingId?: string;
 }
 
+/**
+ * Enrutado a pagina de una propiedad. Ej: /listings/6446e230f6652d4fb4cd88b0
+ */
 const ListingPage = async ({ params }: {params: IParams}) => {
 
   const listing = await getListingById(params);

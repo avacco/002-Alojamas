@@ -5,6 +5,7 @@ interface IParams {
   userId?: string;
   authorId?: string;
 }
+
 /* Dependiendo de lo que se envie, retorna queries especificos */
 export default async function getReservations( params: IParams ) {
   try{
@@ -31,6 +32,7 @@ export default async function getReservations( params: IParams ) {
       }
     });
 
+    // Sanitiza los timestamps convirtiendolos a strings
     const safeReservations = reservations.map((reservation) => ({
         ...reservation,
         createdAt: reservation.createdAt.toISOString(),

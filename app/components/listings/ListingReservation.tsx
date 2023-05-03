@@ -15,7 +15,7 @@ interface ListingReservationProps {
   disabledDates: Date[];
 
 }
-
+/* Componente para mostrar la reserva de un hospedaje, con un precio, fecha de inicio y fin, un calendario y boton de reservar */
 const ListingReservation: React.FC<ListingReservationProps> = ({ price, dateRange, totalPrice, onChangeDate, onSubmit, disabled, disabledDates }) => {
   return (
     <div className='bg-white rounded-xl border-[1px] border-neutral-200 overflow-hidden'>

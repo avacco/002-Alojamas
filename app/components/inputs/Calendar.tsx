@@ -1,5 +1,6 @@
 'use client';
 
+import { es } from "date-fns/locale";
 import { Range, DateRange, RangeKeyDict } from "react-date-range";
 import 'react-date-range/dist/styles.css'
 import 'react-date-range/dist/theme/default.css'
@@ -21,6 +22,7 @@ const Calendar: React.FC<CalendarProps> = ({ value,  onChange, disabledDates }) 
       showDateDisplay={false}
       minDate={new Date()}
       disabledDates={disabledDates}
+      locale={es}
     />
   )
 }

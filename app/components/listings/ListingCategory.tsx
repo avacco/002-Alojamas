@@ -7,7 +7,7 @@ interface ListingCategoryProps {
   description: string;
   icon: IconType;
 }
-
+/* Componente que muestra la cateegoria de una propiedad */
 const ListingCategory: React.FC<ListingCategoryProps> = ({ label, description, icon: Icon }) => {
   return (
     <div className='flex flex-col gap-6'>

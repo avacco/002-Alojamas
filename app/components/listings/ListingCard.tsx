@@ -1,18 +1,18 @@
 'use client';
 
 import useCountries from "@/app/hooks/useCountries";
-import { SafeListing, SafeUser } from "@/app/types";
-import { Listing, Reservation } from "@prisma/client"
+import { SafeListing, SafeReservation, SafeUser } from "@/app/types";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo } from "react";
 import { format } from "date-fns"; 
 import Image from "next/image";
 import HeartButton from "../HeartButton";
 import Button from "../Button";
+import { es } from "date-fns/locale";
 
 interface ListingCardProps {
   data: SafeListing;
-  reservation?: Reservation;
+  reservation?: SafeReservation;
   onAction?:  (id: string) => void;
   disabled?: boolean;
   actionLabel?: string;
@@ -27,6 +27,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ data, reservation, onAction, 
 
   const location = getByValue(data.locationValue);
   
+
   const handleCancel = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
@@ -35,19 +36,21 @@ const ListingCard: React.FC<ListingCardProps> = ({ data, reservation, onAction, 
     onAction?.(actionId);
   }, [onAction, actionId, disabled]);
 
+  /* Retorna el precio de la propiedad, o de la reserva si esta existe */
   const price = useMemo(() => {
     if(reservation) return reservation?.totalPrice;
 
     return data.price
   }, [reservation, data.price]);
 
+  /* Retorna la fecha de la reserva, con fecha convertida a estandares españoles, o null si no hay reserva */
   const reservationDate = useMemo(() => {
     if(!reservation) return null;
 
     const start = new Date(reservation.startDate);
     const end = new Date(reservation.endDate);
     
-    return `${format(start, 'PP')} - ${format(end, 'PP')}`
+    return `${format(start, 'PP', { locale: es })} - ${format(end, 'PP', { locale: es })}`
 
   }, [reservation]);
 
@@ -98,4 +101,4 @@ const ListingCard: React.FC<ListingCardProps> = ({ data, reservation, onAction, 
   )
 }
 
-export default ListingCard
+export default ListingCard;

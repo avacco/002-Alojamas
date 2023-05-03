@@ -12,6 +12,13 @@ import RentModal from './components/modals/RentModal';
 export const metadata = {
   title: 'Alojamiento',
   description: 'App de alojamiento',
+  icons: {
+    icon: {
+      url: "/favicon.png",
+      type: "image/png",
+    },
+    shortcut: { url: "/favicon.png", type: "image/png" },
+  },
 }
 
 // Las fuentes importadas pueden configurarse de este modo y utilizarse a traves de classnames

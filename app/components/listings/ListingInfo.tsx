@@ -24,7 +24,7 @@ interface ListingInfoProps {
   locationValue: string;
 
 }
-
+/* Componente que muestra la información de la propiedad, especificamente la categoria, lugar en el mapa, categoria, quien la ofrece y las caracteristicas de la propiedad */
 const ListingInfo: React.FC<ListingInfoProps> = ({ user, description, guestCount, roomCount, bathroomCount, category, locationValue }) => {
   
   const { getByValue } = useCountries();
