@@ -20,7 +20,7 @@ export default async function getReservations( params: IParams ) {
     if(userId) query.userId = userId;
 
     // Retorna todas las reservas que otros usuarios han hecho a nuestras propiedades
-    if(authorId) query.authorId = authorId;
+    if(authorId)  query.listing = { userid: authorId }; // authorId es el alias de userid
 
     const reservations = await prisma.reservation.findMany({
       where: query,

@@ -31,12 +31,15 @@ const RegisterModal = () => {
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     setIsLoading(true); 
 
-    axios.post('/api/register', data).then(res => { // Envia una petición POST al endpoint /api/register con los datos del formulario
-        registerModal.onClose(); // Cierra el modal de registro
+    axios.post('/api/register', data) // Envia una petición POST al endpoint /api/register con los datos del formulario
+        .then(res => { 
+          registerModal.onClose(); // Cierra el modal de registro
+          loginModal.onOpen(); // Abre el modal de login
+          toast.success('Registro exitoso. Por favor, inicia sesión'); // Envia un toast con un mensaje de éxito
       }).catch(err => {
-        toast.error('Error'); // Envia un toast con un mensaje de error si algo sale mal
+          toast.error('Error'); // Envia un toast con un mensaje de error si algo sale mal
       }).finally(() => {
-        setIsLoading(false);
+          setIsLoading(false);
       })
     }
 
