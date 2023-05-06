@@ -31,7 +31,10 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
   }, [])
   
   const onRent = useCallback(() => {
-      if(!currentUser) loginModal.onOpen(); // Si no hay un usuario logeado, abre el modal de login.
+      if(!currentUser) {
+        loginModal.onOpen(); // Si no hay un usuario logeado, abre el modal de login.
+        return;
+      }
 
       rentModal.onOpen();
 
