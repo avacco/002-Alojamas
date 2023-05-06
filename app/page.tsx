@@ -11,6 +11,8 @@ interface HomeProps {
   searchParams: IListingsParams;
 }
 
+export const dynamic = 'force-dynamic' // Necesario para que vercel pueda construir el proyecto.
+
 /* Componente de Home, donde se verán las propiedades disponibles para el arriendo. */
 const Home = async ({ searchParams }: HomeProps) => {
   
