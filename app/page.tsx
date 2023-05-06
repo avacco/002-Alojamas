@@ -3,22 +3,27 @@ import { Inter } from 'next/font/google'
 import ClientOnly from './components/ClientOnly'
 import Container from './components/Container'
 import EmptyState from './components/EmptyState';
-import getListings from './actions/getListing';
+import getListings, { IListingsParams } from './actions/getListing';
 import ListingCard from './components/listings/ListingCard';
 import getCurrentUser from './actions/getCurrentUser';
 
-export default async function Home() {
+interface HomeProps {
+  searchParams: IListingsParams;
+}
+
+/* Componente de Home, donde se verán las propiedades disponibles para el arriendo. */
+const Home = async ({ searchParams }: HomeProps) => {
   
-  const listings = await getListings();
+  const listings = await getListings(searchParams);
   const currentUser = await getCurrentUser();
 
-  if(listings.length === 0){
-    return (
+  /*  Si no hay propiedades disponibles, se muestra el componente EmptyState con el botón de resetear filtros. */
+  if(listings.length === 0) return (
       <ClientOnly>
         <EmptyState showReset/>
       </ClientOnly>
     )
-  }
+  
 
   return (
     <ClientOnly>
@@ -39,3 +44,5 @@ export default async function Home() {
     </ClientOnly>
   )
 }
+
+export default Home;

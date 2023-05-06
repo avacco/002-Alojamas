@@ -259,7 +259,7 @@ const RentModal = () => {
       actionLabel={actionLabel}
       secondaryActionLabel={secondaryActionLabel}
       secondaryAction={step === STEPS.CATEGORY ? undefined : onBack}
-      title="Rent modal"
+      title="Renta tu propiedad"
       body={bodyContent}
     />
   )

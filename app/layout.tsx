@@ -7,6 +7,7 @@ import ToasterProvider from './providers/ToasterProvider';
 import LoginModal from './components/modals/LoginModal';
 import getCurrentUser from './actions/getCurrentUser';
 import RentModal from './components/modals/RentModal';
+import SearchModal from './components/modals/SearchModal';
 
 // Una nueva manera de manejar metadatos
 export const metadata = {
@@ -41,6 +42,7 @@ export default async function RootLayout({children,}: {
           <LoginModal />
           <RegisterModal />
           <RentModal />
+          <SearchModal />
           <Navbar currentUser={currentUser} />
         </ClientOnly>
         <div className='pb-20 pt-20'>
